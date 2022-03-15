@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 const getDatafromLS=()=>{
   const data = localStorage.getItem('localUsers');
   if(data){
+    console.log(JSON.parse(data))
     return JSON.parse(data);
   }
   else{
@@ -29,7 +30,7 @@ const removeItemFromfromLS=(pos)=>{
     objectified.forEach(element => {
        const index = objectified.indexOf(element)
        if (index === pos) {          
-          let newdata = objectified.splice(index, 1)
+          let newdata = objectified.splice(index + 1, 1)
           console.log(newdata)
           localStorage.setItem("localUsers", JSON.stringify(newdata))
        }
@@ -41,24 +42,31 @@ const removeItemFromfromLS=(pos)=>{
 }
 
 
-const Dashboard = () => {
-    
+const Dashboard = () => {   
 
 
 
     const [localusers, setLocalusers] = useState([]);
-    const [refresh, setefresh] = useState(false);
+
     function reload() {
         reload = location.reload();
     }
     const dispatch = useDispatch()
     const {isLoading, users, errorMessage} = useSelector(state => state.users)
 
-
-
     useEffect(() => {
         dispatch(load_users())        
-    }, [])   
+    }, []) 
+    
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        const d = JSON.parse(localStorage.getItem('localUsers'));
+        setLocalusers(d)
+        console.log("d")
+        console.log(d)
+        console.log(localusers)
+    }
+    }, []);
 
     return (
         <Layout
@@ -75,7 +83,7 @@ const Dashboard = () => {
 
 
                 <main className='flex justify-center bg-slate-500 w-full h-9/10'>  
-                <div classname='justify-center w-screen bg-slate-300 h-screen items-center'>
+                <div>
                     {isLoading &&   
                     <div className='justify-center w-full h-full items-center'>
                         <CircularProgress className='h-48 w-48' color="primary" />

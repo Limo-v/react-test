@@ -20,7 +20,8 @@ export const load_users = () => async dispatch => {
         
 
         const data = await res.json();
-        
+        localStorage.setItem("localUsers", JSON.stringify(data.results))
+         
         if (res.status === 200) {
             dispatch({
                 type: USERS_LOAD_SUCCESS,
@@ -31,9 +32,8 @@ export const load_users = () => async dispatch => {
                 type: USERS_LOAD_ERROR
             });
         }
-        if (typeof window !== "undefined") {
-            localStorage.setItem("localUsers", JSON.stringify(data.results))
-        }
+       // if (typeof window !== "undefined") {
+     ///   }
         
     }catch(err){
         dispatch({
