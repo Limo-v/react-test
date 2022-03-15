@@ -11,6 +11,36 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+const getDatafromLS=()=>{
+  const data = localStorage.getItem('localUsers');
+  if(data){
+    return JSON.parse(data);
+  }
+  else{
+    return []
+  }
+}
+
+const removeItemFromfromLS=(pos)=>{
+  const data = localStorage.getItem('localUsers');
+  if(data){
+    let objectified = JSON.parse(data);
+    console.log(objectified)
+    objectified.forEach(element => {
+       const index = objectified.indexOf(element)
+       if (index === pos) {          
+          let newdata = objectified.splice(index, 1)
+          console.log(newdata)
+          localStorage.setItem("localUsers", JSON.stringify(newdata))
+       }
+    });
+  }
+  else{
+    return []
+  }
+}
+
+
 const Dashboard = () => {
     
 
@@ -28,34 +58,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         dispatch(load_users())        
-    }, [])    
-
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        const d = JSON.parse(localStorage.getItem('localUsers'));
-        setLocalusers(d)
-        console.log("d")
-        console.log(d)
-        console.log(localusers)
-    }
-    }, []);
-
-    function removeFilters(inditem, val) {     
-      if (typeof window !== "undefined") { 
-         const items = JSON.parse(localStorage.getItem('localUsers'));
-         items.forEach(element => {
-              if (element.email == inditem) {
-                items.splice(val +1)
-                console.log("delete")
-                
-              }
-         localStorage.setItem("localUsers", JSON.stringify(items))
-         });
-      }
-  }
-
-
-    
+    }, [])   
 
     return (
         <Layout
@@ -64,7 +67,7 @@ const Dashboard = () => {
         >
             <div className='flex-col justify-center  w-screen'>
                 {users && <div className='flex justify-evenly'>
-                        <div>Number of Users : {localusers.length}</div>
+                        <div>Number of Users : {getDatafromLS().length}</div>
                         <Button
                         onClick={reload}
                         >REFRESH</Button>
@@ -79,7 +82,7 @@ const Dashboard = () => {
                     </div>
                     }
                     {errorMessage && <h2>{errorMessage}</h2>}
-                    {users && localusers.map((item, index) => {
+                    {users && getDatafromLS().map((item, index) => {
                        return(
                         <Card className='justify-center  mb-4' sx={{ minWidth: 345 }}>
                   
@@ -98,7 +101,7 @@ const Dashboard = () => {
                      
                         <CardActions>
                           <Button
-                           onClick={() => {removeFilters(item.email);}}
+                           onClick={() => {removeItemFromfromLS(index);}}
                            size="small" color="secondary">
                             DELETE
                           </Button>
